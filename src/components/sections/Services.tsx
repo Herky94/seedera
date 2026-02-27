@@ -192,51 +192,56 @@ const SERVICES: Service[] = [
 
 /* ── Sub-service list with hover-to-reveal description ── */
 function SubServiceList({ subs }: { subs: SubService[] }) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(1); // default 2nd item bold like Figma
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   return (
-    <div className="flex flex-col md:flex-row flex-1 justify-between">
-      {/* Sub-service names */}
-      <ul className="flex flex-col gap-1 shrink-0">
-        {subs.map((sub, i) => (
-          <li key={i}>
-            <button
-              className="text-left text-black cursor-pointer leading-none"
-              style={{
-                fontSize: "var(--font-h5)",
-                fontWeight: activeIndex === i ? 700 : 400,
-                opacity: activeIndex === i ? 1 : 0.3,
-                transition:
-                  "font-weight 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                padding: "6px 0",
-              }}
-              onMouseEnter={() => setActiveIndex(i)}
-            >
-              {sub.name}
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-col flex-1">
+      {/* Desktop: row layout | Mobile: column */}
+      <div className="flex flex-col lg:flex-row lg:justify-between">
+        {/* Sub-service names */}
+        <ul className="flex flex-col gap-1 shrink-0">
+          {subs.map((sub, i) => (
+            <li key={i}>
+              <button
+                className="text-left text-black cursor-pointer leading-none"
+                style={{
+                  fontSize: "var(--font-h5)",
+                  fontWeight: activeIndex === i ? 700 : 400,
+                  opacity: activeIndex === i ? 1 : 0.3,
+                  transition:
+                    "font-weight 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                  padding: "6px 0",
+                }}
+                onMouseEnter={() => setActiveIndex(i)}
+                onClick={() => setActiveIndex(i)}
+              >
+                {sub.name}
+              </button>
+            </li>
+          ))}
+        </ul>
 
-      {/* Description – smooth crossfade on hover */}
-      <div className="hidden md:flex items-start pt-1 w-[280px] lg:w-[350px] xl:w-[420px] shrink-0 ml-auto relative">
-        {subs.map((sub, i) => (
-          <p
-            key={i}
-            className="text-black/80 absolute top-0 left-0 right-0"
-            style={{
-              fontSize: "clamp(0.875rem, 1.111vw, 1.125rem)",
-              lineHeight: 1.5,
-              opacity: activeIndex === i ? 1 : 0,
-              transform:
-                activeIndex === i ? "translateY(0)" : "translateY(6px)",
-              transition:
-                "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-            }}
-          >
-            {sub.description}
-          </p>
-        ))}
+        {/* Description – smooth crossfade */}
+        <div className="relative mt-6 lg:mt-0 lg:w-[280px] xl:w-[350px] 2xl:w-[420px] lg:shrink-0 lg:ml-auto min-h-[80px]">
+          {subs.map((sub, i) => (
+            <p
+              key={i}
+              className="text-black/80 absolute top-0 left-0 right-0"
+              style={{
+                fontSize: "clamp(0.875rem, 1.111vw, 1.125rem)",
+                lineHeight: 1.5,
+                opacity: activeIndex === i ? 1 : 0,
+                transform:
+                  activeIndex === i ? "translateY(0)" : "translateY(6px)",
+                transition:
+                  "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                pointerEvents: activeIndex === i ? "auto" : "none",
+              }}
+            >
+              {sub.description}
+            </p>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -247,20 +252,45 @@ export default function Services() {
 
   useGSAP(
     () => {
-      const cards = gsap.utils.toArray<HTMLElement>(".service-card");
-      const PIN_TOP = 80; // px from viewport top
-      const STACK_OFFSET = 80; // px offset between stacked cards
+      const mm = gsap.matchMedia();
 
-      cards.forEach((card, i) => {
-        ScrollTrigger.create({
-          trigger: card,
-          start: () => `top-=${i * STACK_OFFSET} top+=${PIN_TOP}`,
-          endTrigger: sectionRef.current,
-          end: "bottom bottom",
-          pin: true,
-          pinSpacing: false,
-          invalidateOnRefresh: true,
-          id: `service-pin-${i}`,
+      // Mobile / Tablet
+      mm.add("(max-width: 767px)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(".service-card");
+        const PIN_TOP = 60;
+        const STACK_OFFSET = 30;
+
+        cards.forEach((card, i) => {
+          ScrollTrigger.create({
+            trigger: card,
+            start: () => `top-=${i * STACK_OFFSET} top+=${PIN_TOP}`,
+            endTrigger: sectionRef.current,
+            end: "bottom bottom",
+            pin: true,
+            pinSpacing: false,
+            invalidateOnRefresh: true,
+            id: `service-pin-${i}`,
+          });
+        });
+      });
+
+      // Desktop
+      mm.add("(min-width: 768px)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(".service-card");
+        const PIN_TOP = 80;
+        const STACK_OFFSET = 80;
+
+        cards.forEach((card, i) => {
+          ScrollTrigger.create({
+            trigger: card,
+            start: () => `top-=${i * STACK_OFFSET} top+=${PIN_TOP}`,
+            endTrigger: sectionRef.current,
+            end: "bottom bottom",
+            pin: true,
+            pinSpacing: false,
+            invalidateOnRefresh: true,
+            id: `service-pin-${i}`,
+          });
         });
       });
     },
@@ -271,7 +301,7 @@ export default function Services() {
     <section
       ref={sectionRef}
       id="services"
-      className="relative bg-white"
+      className="relative z-0 bg-white"
       aria-label="Servizi"
     >
       {/* Section intro */}
@@ -288,30 +318,28 @@ export default function Services() {
       {SERVICES.map((service, i) => (
         <div
           key={i}
-          className="service-card w-full container-content"
-          style={{
-            marginTop: i === 0 ? 0 : "150px",
-          }}
+          className={`service-card w-full container-content ${i > 0 ? "mt-4 md:mt-[150px]" : ""}`}
         >
           <div
             className="rounded-[10px] flex flex-col"
             style={{ backgroundColor: service.color }}
           >
-            <div className="px-6 md:px-12 lg:px-16 pt-10 md:pt-12 pb-10 md:pb-14">
-              {/* ── Row 1: Number + Title (title aligned with subs below) ── */}
-              <div
-                className="flex items-baseline"
-                style={{ gap: "clamp(2rem, 5.556vw, 5rem)" }}
-              >
+            <div className="px-5 md:px-12 lg:px-16 pt-8 md:pt-12 pb-8 md:pb-14">
+              {/* ── Row 1: Number + Title ── */}
+              <div className="flex items-baseline gap-4">
                 <span
-                  className="text-black font-medium leading-none shrink-0"
+                  className="text-black font-medium leading-none shrink-0 md:w-[clamp(150px,15.625vw,225px)]"
                   style={{
-                    fontSize: "clamp(2.5rem, 5.417vw, 4.875rem)",
-                    width: "clamp(150px, 15.625vw, 225px)",
+                    fontSize: "clamp(2rem, 5.417vw, 4.875rem)",
                   }}
                 >
                   0{i + 1}
                 </span>
+                {/* Desktop spacer to match image+gap below */}
+                <div
+                  className="hidden md:block shrink-0"
+                  style={{ width: "clamp(2rem, 5.556vw, 5rem)" }}
+                />
                 <h3
                   className="text-black font-normal uppercase leading-none"
                   style={{
@@ -323,22 +351,16 @@ export default function Services() {
               </div>
 
               {/* ── Separator ── */}
-              <div className="w-full h-[1px] bg-black/20 mt-5 mb-[35px]" />
+              <div className="w-full h-[1px] bg-black/20 mt-5 mb-6 md:mb-[35px]" />
 
-              {/* ── Row 3: Image + Subs + Description ── */}
+              {/* ── Content: Image + Subs + Description ── */}
               <div
                 className="flex flex-col md:flex-row"
-                style={{ gap: "clamp(2rem, 5.556vw, 5rem)" }}
+                style={{ gap: "clamp(1.25rem, 5.556vw, 5rem)" }}
               >
-                <div
-                  className="shrink-0 bg-black rounded-[5px]"
-                  style={{
-                    width: "clamp(150px, 15.625vw, 225px)",
-                    height: "clamp(150px, 15.625vw, 225px)",
-                  }}
-                />
+                <div className="shrink-0 bg-black rounded-[5px] w-[120px] h-[120px] md:w-[clamp(150px,15.625vw,225px)] md:h-[clamp(150px,15.625vw,225px)]" />
 
-                {/* Sub-services with hover description */}
+                {/* Sub-services with hover/click description */}
                 <SubServiceList subs={service.subs} />
               </div>
             </div>

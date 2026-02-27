@@ -171,6 +171,31 @@ body {
   will-change: transform;
 }
 
+/* ---- Rolling text (Projects client names) ---- */
+.rolling-text-wrap {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.4;
+  height: 1.4em;
+}
+
+.rolling-text-row {
+  display: block;
+}
+
+.rolling-text-row:last-child {
+  color: #cdfd51 !important;
+}
+
+.rolling-text-char {
+  display: inline-block;
+  transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.rolling-text-wrap:hover .rolling-text-char {
+  transform: translateY(-100%);
+}
+
 /* ---- Physics canvas ---- */
 .physics-canvas {
   position: absolute;
