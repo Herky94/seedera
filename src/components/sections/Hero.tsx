@@ -28,10 +28,10 @@ export default function Hero() {
           duration: 1,
           ease: "power3.out",
         },
-        "-=0.6"
+        "-=0.6",
       );
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
@@ -42,17 +42,15 @@ export default function Hero() {
       aria-label="Hero"
     >
       {/* Bottom-anchored content */}
-      <div className="relative z-10 px-6 md:px-12 pb-16 md:pb-20">
+      <div className="container-content relative z-10 pb-16 md:pb-20">
         <h1
           ref={headlineRef}
-          className="text-black font-normal uppercase"
-          style={{ fontSize: "clamp(36px, 5vw, 70px)", lineHeight: "1.03" }}
+          className="text-h1 text-black font-normal uppercase"
         >
           SIAMO UNA DIGITAL COMPANY
           <br />
           CI RIVOLGIAMO A START UP
-          <br />
-          E PICCOLE E MEDIE IMPRESE
+          <br />E PICCOLE E MEDIE IMPRESE
         </h1>
       </div>
 
@@ -62,8 +60,20 @@ export default function Hero() {
         className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
         <div className="w-10 h-10 rounded-full border-2 border-black/30 flex items-center justify-center animate-bounce">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 1v10M7 11l4-4M7 11L3 7" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7 1v10M7 11l4-4M7 11L3 7"
+              stroke="black"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
       </div>

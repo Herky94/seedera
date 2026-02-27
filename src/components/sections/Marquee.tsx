@@ -57,7 +57,7 @@ export default function Marquee() {
         },
       });
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   const row = MARQUEE_TEXTS.join(" ");
@@ -73,7 +73,10 @@ export default function Marquee() {
       {/* Row 1 - moves left */}
       <div className="mb-4">
         <div ref={track1Ref} className="marquee-track">
-          <span className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-foreground whitespace-nowrap">
+          <span
+            className="text-h1 font-bold text-foreground whitespace-nowrap"
+            style={{ fontSize: "clamp(3rem, 6.25vw, 6rem)" }}
+          >
             {doubleRow}
           </span>
         </div>
@@ -86,7 +89,10 @@ export default function Marquee() {
           className="marquee-track"
           style={{ transform: "translateX(-50%)" }}
         >
-          <span className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-foreground/10 whitespace-nowrap">
+          <span
+            className="text-h1 font-bold text-foreground/10 whitespace-nowrap"
+            style={{ fontSize: "clamp(3rem, 6.25vw, 6rem)" }}
+          >
             {doubleRow}
           </span>
         </div>

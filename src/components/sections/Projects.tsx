@@ -45,7 +45,7 @@ export default function Projects() {
       // Text reveal for intro
       const words = gsap.utils.toArray<HTMLElement>(".project-text-word");
       const textContainer = sectionRef.current?.querySelector(
-        ".project-text-container"
+        ".project-text-container",
       );
 
       if (textContainer) {
@@ -86,7 +86,7 @@ export default function Projects() {
         });
       });
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   return (
@@ -97,70 +97,70 @@ export default function Projects() {
       aria-label="Progetti"
     >
       {/* Text reveal */}
-      <div className="project-text-container h-screen flex items-center justify-center px-6 md:px-12">
-        <p className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-5xl text-center">
-          {INTRO_TEXT.split(" ").map((word, i) => (
-            <span
-              key={i}
-              className="project-text-word text-reveal-word inline-block mr-[0.3em]"
-            >
-              {word}
-            </span>
-          ))}
-        </p>
+      <div className="project-text-container h-screen flex items-center justify-center">
+        <div className="container-content">
+          <p className="text-h2 font-bold text-center">
+            {INTRO_TEXT.split(" ").map((word, i) => (
+              <span
+                key={i}
+                className="project-text-word text-reveal-word inline-block mr-[0.3em]"
+              >
+                {word}
+              </span>
+            ))}
+          </p>
+        </div>
       </div>
 
       {/* Projects grid */}
-      <div className="px-6 md:px-12 lg:px-20 pb-20 md:pb-32">
-        <div className="max-w-6xl mx-auto">
-          <span className="text-foreground/30 text-sm uppercase tracking-[0.3em] block mb-12">
-            Progetti selezionati
-          </span>
+      <div className="container-content pb-20 md:pb-32">
+        <span className="text-foreground/30 text-btn uppercase tracking-[0.3em] block mb-12">
+          Progetti selezionati
+        </span>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {PROJECTS.map((project) => (
-              <article
-                key={project.title}
-                className="project-card group relative overflow-hidden rounded-2xl cursor-pointer"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {PROJECTS.map((project) => (
+            <article
+              key={project.title}
+              className="project-card group relative overflow-hidden rounded-2xl cursor-pointer"
+            >
+              {/* Color background */}
+              <div
+                className="aspect-[4/3] w-full transition-transform duration-500 group-hover:scale-105"
+                style={{ backgroundColor: project.color }}
               >
-                {/* Color background */}
-                <div
-                  className="aspect-[4/3] w-full transition-transform duration-500 group-hover:scale-105"
-                  style={{ backgroundColor: project.color }}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span
-                      className="text-6xl md:text-8xl font-bold opacity-10"
-                      style={{
-                        color:
-                          project.color === "#CDFD51" ||
-                          project.color === "#62CB95"
-                            ? "#000"
-                            : "#fff",
-                      }}
-                    >
-                      {project.category.charAt(0)}
-                    </span>
-                  </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span
+                    className="text-6xl md:text-8xl font-bold opacity-10"
+                    style={{
+                      color:
+                        project.color === "#CDFD51" ||
+                        project.color === "#62CB95"
+                          ? "#000"
+                          : "#fff",
+                    }}
+                  >
+                    {project.category.charAt(0)}
+                  </span>
                 </div>
+              </div>
 
-                {/* Info overlay */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-foreground/40 text-sm">
-                      {project.category}
-                    </span>
-                    <span className="text-foreground/30 text-sm">
-                      {project.year}
-                    </span>
-                  </div>
-                  <h3 className="text-foreground text-xl md:text-2xl font-bold">
-                    {project.title}
-                  </h3>
+              {/* Info overlay */}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-foreground/40 text-sm">
+                    {project.category}
+                  </span>
+                  <span className="text-foreground/30 text-sm">
+                    {project.year}
+                  </span>
                 </div>
-              </article>
-            ))}
-          </div>
+                <h3 className="text-foreground text-h5 font-bold">
+                  {project.title}
+                </h3>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

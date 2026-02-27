@@ -1,24 +1,111 @@
 @import "tailwindcss";
 
+/* =============================================
+   DESIGN TOKENS – Seedera
+   Base: 1440 px (Figma artboard)
+   ============================================= */
+
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --primary: #CDFD51;
-  --service-1: #CDFD51;
-  --service-2: #DB3A30;
-  --service-3: #6396FF;
-  --service-4: #62CB95;
+  /* ---- Colors ---- */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-yellow: #cdfd51;
+  --color-cyan: #6396ff;
+  --color-green: #62cb95;
+  --color-pink: #f3adc5;
+  --color-red: #db3a30;
+  --color-purple: #f3adc5; /* TODO: replace with actual Purple hex from Figma */
+  --color-blue: #1a4299;
+  --color-grey: #cccccc;
+  --color-middle-grey: #9e9e9e;
+  --color-dark-grey: #d9d9d9;
+
+  /* Semantic aliases */
+  --background: var(--color-black);
+  --foreground: var(--color-white);
+  --primary: var(--color-yellow);
+
+  /* ---- Fluid Typography (min @ 375px – base @ 1440px – max @ 1920px) ---- */
+  --font-h1: clamp(2.375rem, 4.861vw, 4.875rem); /* 38 → 70 → 78 px */
+  --font-h2: clamp(1.75rem, 3.333vw, 3.375rem); /* 28 → 48 → 54 px */
+  --font-h3: clamp(1.5rem, 2.708vw, 2.75rem); /* 24 → 39 → 44 px */
+  --font-h4: clamp(1.375rem, 2.222vw, 2.25rem); /* 22 → 32 → 36 px */
+  --font-h5: clamp(1.125rem, 1.736vw, 1.75rem); /* 18 → 25 → 28 px */
+  --font-h6: clamp(1rem, 1.389vw, 1.375rem); /* 16 → 20 → 22 px */
+  --font-btn: clamp(0.75rem, 0.972vw, 1rem); /* 12 → 14 → 16 px */
+  --font-p: clamp(0.875rem, 1.111vw, 1.125rem); /* 14 → 16 → 18 px */
+
+  /* ---- Line Heights ---- */
+  --lh-h1: 1; /* 62/62 */
+  --lh-h2: 1.125; /* 54/48 */
+  --lh-h3: 1.2;
+  --lh-h4: 1.2;
+  --lh-h5: 1.2;
+  --lh-h6: 1.2;
+  --lh-btn: 1;
+  --lh-p: 1.5;
 }
 
+/* ---- Tailwind theme bridge ---- */
 @theme inline {
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-service-1: var(--service-1);
-  --color-service-2: var(--service-2);
-  --color-service-3: var(--service-3);
-  --color-service-4: var(--service-4);
+  --color-black: var(--color-black);
+  --color-white: var(--color-white);
+  --color-yellow: var(--color-yellow);
+  --color-cyan: var(--color-cyan);
+  --color-green: var(--color-green);
+  --color-pink: var(--color-pink);
+  --color-red: var(--color-red);
+  --color-purple: var(--color-purple);
+  --color-blue: var(--color-blue);
+  --color-grey: var(--color-grey);
+  --color-middle-grey: var(--color-middle-grey);
+  --color-dark-grey: var(--color-dark-grey);
+
+  /* Font family */
   --font-sans: var(--font-bdo-grotesk);
+}
+
+/* =============================================
+   TYPOGRAPHY UTILITIES
+   Use these classes to apply consistent styles
+   e.g. <h1 className="text-h1"> or <p className="text-p">
+   ============================================= */
+
+.text-h1 {
+  font-size: var(--font-h1);
+  line-height: var(--lh-h1);
+}
+.text-h2 {
+  font-size: var(--font-h2);
+  line-height: var(--lh-h2);
+}
+.text-h3 {
+  font-size: var(--font-h3);
+  line-height: var(--lh-h3);
+}
+.text-h4 {
+  font-size: var(--font-h4);
+  line-height: var(--lh-h4);
+}
+.text-h5 {
+  font-size: var(--font-h5);
+  line-height: var(--lh-h5);
+}
+.text-h6 {
+  font-size: var(--font-h6);
+  line-height: var(--lh-h6);
+}
+.text-btn {
+  font-size: var(--font-btn);
+  line-height: var(--lh-btn);
+}
+.text-p {
+  font-size: var(--font-p);
+  line-height: var(--lh-p);
 }
 
 /* ---- Base ---- */
@@ -30,7 +117,37 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--font-p);
+  line-height: var(--lh-p);
   overflow-x: hidden;
+}
+
+/* =============================================
+   LAYOUT – Section content container
+   Sections stay full-width (for bg colors/images).
+   Wrap inner content in .container-content.
+   – Mobile (<768):  20px side padding
+   – Tablet+ (≥768): 48px side padding
+   – >1440px:         max-width 1344px (1440−48×2), centered
+   ============================================= */
+
+.container-content {
+  width: 100%;
+  max-width: 1344px; /* 1440 − 48×2 */
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+@media (min-width: 768px) {
+  .container-content {
+    padding-inline: 48px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .container-content {
+    padding-inline: 0;
+  }
 }
 
 /* ---- Text reveal effect ---- */

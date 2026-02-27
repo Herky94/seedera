@@ -180,24 +180,25 @@ export default function TargetPhysics() {
       aria-label="Target"
     >
       {/* Header */}
-      <div className="relative z-10 px-6 md:px-12 pt-20 md:pt-32 pb-8">
-        <span className="text-foreground/30 text-sm uppercase tracking-[0.3em] block mb-4">
-          Il nostro target
-        </span>
-        <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-foreground leading-tight max-w-3xl">
-          Con chi{" "}
-          <span className="text-primary">lavoriamo</span>
-        </h2>
-        <p className="text-foreground/50 mt-4 max-w-xl text-base md:text-lg">
-          Trascina i mattoncini, lancialli o falli esplodere. Ogni blocco
-          rappresenta un settore in cui operiamo.
-        </p>
-        <button
-          onClick={handleExplode}
-          className="mt-6 px-6 py-3 bg-primary text-background font-bold rounded-full hover:scale-105 active:scale-95 transition-transform text-sm uppercase tracking-wider"
-        >
-          Fai esplodere ✦
-        </button>
+      <div className="relative z-10 pt-20 md:pt-32 pb-8">
+        <div className="container-content">
+          <span className="text-foreground/30 text-btn uppercase tracking-[0.3em] block mb-4">
+            Il nostro target
+          </span>
+          <h2 className="text-h2 font-bold text-foreground max-w-3xl">
+            Con chi <span className="text-primary">lavoriamo</span>
+          </h2>
+          <p className="text-p text-foreground/50 mt-4 max-w-xl">
+            Trascina i mattoncini, lancialli o falli esplodere. Ogni blocco
+            rappresenta un settore in cui operiamo.
+          </p>
+          <button
+            onClick={handleExplode}
+            className="mt-6 px-6 py-3 bg-primary text-background font-bold rounded-full hover:scale-105 active:scale-95 transition-transform text-btn uppercase tracking-wider"
+          >
+            Fai esplodere ✦
+          </button>
+        </div>
       </div>
 
       {/* Physics scene */}

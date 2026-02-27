@@ -40,7 +40,7 @@ export default function Navbar() {
           scrolled ? "backdrop-blur-md" : ""
         }`}
       >
-        <div className="flex items-center justify-between px-4 md:px-8 py-3">
+        <div className="container-content flex items-center justify-between py-3">
           {/* Left: Logo pill + Nav pills */}
           <div className="flex items-center gap-1.5">
             {/* Logo pill - filled */}
@@ -48,13 +48,15 @@ export default function Navbar() {
               href="/"
               className="relative z-50 bg-black text-white font-light rounded-[5px] tracking-wide hover:bg-black/80 transition-colors"
               style={{ padding: "5px 10px", fontSize: "15px" }}
-              style={{ padding: "5px 10px" }}
             >
               Flumenia Studio
             </Link>
 
             {/* Nav pills - hidden on mobile */}
-            <nav className="hidden md:flex items-center gap-1.5" aria-label="Navigazione principale">
+            <nav
+              className="hidden md:flex items-center gap-1.5"
+              aria-label="Navigazione principale"
+            >
               {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.href}
@@ -78,9 +80,18 @@ export default function Navbar() {
             aria-label={isOpen ? "Chiudi menu" : "Apri menu"}
             aria-expanded={isOpen}
           >
-            <span className="hamburger-line block bg-black" style={{ width: "33px", height: "1px" }} />
-            <span className="hamburger-line block bg-black" style={{ width: "33px", height: "1px" }} />
-            <span className="hamburger-line block bg-black" style={{ width: "33px", height: "1px" }} />
+            <span
+              className="hamburger-line block bg-black"
+              style={{ width: "33px", height: "1px" }}
+            />
+            <span
+              className="hamburger-line block bg-black"
+              style={{ width: "33px", height: "1px" }}
+            />
+            <span
+              className="hamburger-line block bg-black"
+              style={{ width: "33px", height: "1px" }}
+            />
           </button>
         </div>
       </header>

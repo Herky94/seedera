@@ -28,7 +28,9 @@ export default function Clients() {
     () => {
       // Text reveal
       const words = gsap.utils.toArray<HTMLElement>(".client-text-word");
-      const trigger = sectionRef.current?.querySelector(".client-text-container");
+      const trigger = sectionRef.current?.querySelector(
+        ".client-text-container",
+      );
 
       if (trigger) {
         ScrollTrigger.create({
@@ -69,7 +71,7 @@ export default function Clients() {
         });
       });
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   return (
@@ -80,46 +82,49 @@ export default function Clients() {
       aria-label="Clienti"
     >
       {/* Text reveal */}
-      <div className="client-text-container h-screen flex items-center justify-center px-6 md:px-12">
-        <p className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-5xl text-center">
-          {QUOTE.split(" ").map((word, i) => (
-            <span key={i} className="client-text-word text-reveal-word inline-block mr-[0.3em]">
-              {word}
-            </span>
-          ))}
-        </p>
+      <div className="client-text-container h-screen flex items-center justify-center">
+        <div className="container-content">
+          <p className="text-h2 font-bold text-center">
+            {QUOTE.split(" ").map((word, i) => (
+              <span
+                key={i}
+                className="client-text-word text-reveal-word inline-block mr-[0.3em]"
+              >
+                {word}
+              </span>
+            ))}
+          </p>
+        </div>
       </div>
 
       {/* Client grid - staggered layout */}
-      <div className="px-6 md:px-12 lg:px-20 py-20 md:py-32">
-        <div className="max-w-6xl mx-auto">
-          <span className="text-foreground/30 text-sm uppercase tracking-[0.3em] block mb-12">
-            I nostri clienti
-          </span>
+      <div className="container-content py-20 md:py-32">
+        <span className="text-foreground/30 text-btn uppercase tracking-[0.3em] block mb-12">
+          I nostri clienti
+        </span>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {CLIENTS.map((client, i) => (
-              <div
-                key={client.name}
-                className={`client-card group relative p-6 md:p-8 rounded-2xl border border-foreground/10 hover:border-primary/50 transition-all duration-300 ${
-                  i % 2 === 1 ? "sm:mt-12" : ""
-                }`}
-              >
-                {/* Placeholder logo area */}
-                <div className="w-16 h-16 rounded-xl bg-foreground/5 group-hover:bg-primary/10 transition-colors duration-300 flex items-center justify-center mb-6">
-                  <span className="text-foreground/30 text-xl font-bold">
-                    {client.name.charAt(0)}
-                  </span>
-                </div>
-                <h3 className="text-foreground text-lg font-bold mb-1">
-                  {client.name}
-                </h3>
-                <span className="text-foreground/40 text-sm">
-                  {client.sector}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {CLIENTS.map((client, i) => (
+            <div
+              key={client.name}
+              className={`client-card group relative p-6 md:p-8 rounded-2xl border border-foreground/10 hover:border-primary/50 transition-all duration-300 ${
+                i % 2 === 1 ? "sm:mt-12" : ""
+              }`}
+            >
+              {/* Placeholder logo area */}
+              <div className="w-16 h-16 rounded-xl bg-foreground/5 group-hover:bg-primary/10 transition-colors duration-300 flex items-center justify-center mb-6">
+                <span className="text-foreground/30 text-xl font-bold">
+                  {client.name.charAt(0)}
                 </span>
               </div>
-            ))}
-          </div>
+              <h3 className="text-foreground text-h6 font-bold mb-1">
+                {client.name}
+              </h3>
+              <span className="text-foreground/40 text-btn">
+                {client.sector}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

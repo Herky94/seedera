@@ -24,72 +24,70 @@ export default function Footer() {
       className="relative bg-primary text-background"
       aria-label="Footer"
     >
-      <div className="px-6 md:px-12 lg:px-20 py-16 md:py-24">
-        <div className="max-w-6xl mx-auto">
-          {/* Top row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-16 md:mb-24">
-            {/* CTA */}
-            <div className="md:col-span-2">
-              <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                Hai un progetto?
-                <br />
-                Parliamone.
-              </h2>
-              <a
-                href="mailto:hello@seedera.it"
-                className="inline-block mt-8 text-lg md:text-xl font-medium border-b-2 border-background hover:opacity-70 transition-opacity"
-              >
-                hello@seedera.it
-              </a>
-            </div>
-
-            {/* Links */}
-            <div className="flex flex-col sm:flex-row md:flex-col gap-8">
-              <div>
-                <span className="text-background/50 text-sm uppercase tracking-widest block mb-4">
-                  Navigazione
-                </span>
-                <nav className="flex flex-col gap-2">
-                  {FOOTER_LINKS.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="text-background hover:opacity-70 transition-opacity text-sm"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-
-              <div>
-                <span className="text-background/50 text-sm uppercase tracking-widest block mb-4">
-                  Social
-                </span>
-                <nav className="flex flex-col gap-2">
-                  {SOCIALS.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-background hover:opacity-70 transition-opacity text-sm"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </nav>
-              </div>
-            </div>
+      <div className="container-content py-16 md:py-24">
+        {/* Top row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-16 md:mb-24">
+          {/* CTA */}
+          <div className="md:col-span-2">
+            <h2 className="text-h2 font-bold">
+              Hai un progetto?
+              <br />
+              Parliamone.
+            </h2>
+            <a
+              href="mailto:hello@seedera.it"
+              className="inline-block mt-8 text-lg md:text-xl font-medium border-b-2 border-background hover:opacity-70 transition-opacity"
+            >
+              hello@seedera.it
+            </a>
           </div>
 
-          {/* Bottom bar */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8 border-t border-background/20">
-            <span className="text-3xl md:text-4xl font-bold">Seedera</span>
-            <span className="text-background/50 text-sm">
-              © {new Date().getFullYear()} Seedera. Tutti i diritti riservati.
-            </span>
+          {/* Links */}
+          <div className="flex flex-col sm:flex-row md:flex-col gap-8">
+            <div>
+              <span className="text-background/50 text-sm uppercase tracking-widest block mb-4">
+                Navigazione
+              </span>
+              <nav className="flex flex-col gap-2">
+                {FOOTER_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-background hover:opacity-70 transition-opacity text-sm"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            <div>
+              <span className="text-background/50 text-sm uppercase tracking-widest block mb-4">
+                Social
+              </span>
+              <nav className="flex flex-col gap-2">
+                {SOCIALS.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-background hover:opacity-70 transition-opacity text-sm"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8 border-t border-background/20">
+          <span className="text-h3 font-bold">Seedera</span>
+          <span className="text-background/50 text-btn">
+            © {new Date().getFullYear()} Seedera. Tutti i diritti riservati.
+          </span>
         </div>
       </div>
     </footer>
