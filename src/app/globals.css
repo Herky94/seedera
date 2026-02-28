@@ -166,6 +166,39 @@ body {
   will-change: transform;
 }
 
+/* ---- Continuous-loop marquee ---- */
+.marquee-loop {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-rtl {
+  animation: marquee-scroll-left 60s linear infinite;
+}
+
+.marquee-ltr {
+  animation: marquee-scroll-right 80s linear infinite;
+}
+
+@keyframes marquee-scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 /* ---- Service card stacking ---- */
 .service-card {
   will-change: transform;
@@ -214,6 +247,15 @@ body {
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar {
   width: 0px;
+}
+
+/* Hide scrollbar for carousel */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ---- Hamburger ---- */
