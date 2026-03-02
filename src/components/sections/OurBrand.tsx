@@ -127,26 +127,73 @@ function DragCursor() {
 export default function OurBrand() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const dragState = useRef({ startX: 0, scrollLeft: 0 });
+  const dragState = useRef({
+    startX: 0,
+    scrollLeft: 0,
+    prevX: 0,
+    velocity: 0,
+    lastTime: 0,
+    rafId: 0,
+  });
 
-  /* Drag handlers */
+  /* Drag handlers with inertia */
   const handlePointerDown = (e: React.PointerEvent) => {
     const track = trackRef.current;
     if (!track) return;
+    // Kill any ongoing inertia animation
+    cancelAnimationFrame(dragState.current.rafId);
+    gsap.killTweensOf(track, "scrollLeft");
+
     setIsDragging(true);
     dragState.current.startX = e.clientX;
+    dragState.current.prevX = e.clientX;
     dragState.current.scrollLeft = track.scrollLeft;
+    dragState.current.velocity = 0;
+    dragState.current.lastTime = Date.now();
     track.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging || !trackRef.current) return;
-    const dx = e.clientX - dragState.current.startX;
-    trackRef.current.scrollLeft = dragState.current.scrollLeft - dx;
+    const now = Date.now();
+    const dt = now - dragState.current.lastTime;
+    const dx = e.clientX - dragState.current.prevX;
+
+    // Update scroll position
+    trackRef.current.scrollLeft =
+      dragState.current.scrollLeft - (e.clientX - dragState.current.startX);
+
+    // Track velocity (px/ms) with smoothing
+    if (dt > 0) {
+      const instantVelocity = dx / dt;
+      dragState.current.velocity =
+        0.8 * dragState.current.velocity + 0.2 * instantVelocity;
+    }
+
+    dragState.current.prevX = e.clientX;
+    dragState.current.lastTime = now;
   };
 
   const handlePointerUp = () => {
+    if (!isDragging) return;
     setIsDragging(false);
+
+    const track = trackRef.current;
+    if (!track) return;
+
+    // Apply inertia: coast with the current velocity
+    const v = dragState.current.velocity; // px/ms
+    const momentum = v * 800; // distance to glide
+    const target = track.scrollLeft - momentum;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const clamped = Math.max(0, Math.min(maxScroll, target));
+
+    gsap.to(track, {
+      scrollLeft: clamped,
+      duration: Math.min(1.2, Math.abs(momentum) / 600),
+      ease: "power3.out",
+      overwrite: true,
+    });
   };
 
   const handleCursorShow = () => {
@@ -158,7 +205,10 @@ export default function OurBrand() {
   };
 
   return (
-    <section className="relative bg-white z-10 pb-24 md:pb-40" aria-label="Progetti proprietari">
+    <section
+      className="relative bg-white z-10 pb-24 md:pb-40"
+      aria-label="Progetti proprietari"
+    >
       <DragCursor />
 
       {/* Carousel wrapper inside container */}
@@ -167,7 +217,6 @@ export default function OurBrand() {
           ref={trackRef}
           className="flex gap-6 overflow-x-auto scrollbar-hide cursor-none select-none -mr-5 md:-mr-12"
           style={{
-            scrollSnapType: "x mandatory",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
             paddingRight: "20px",
@@ -186,7 +235,6 @@ export default function OurBrand() {
               style={{
                 width: "calc((100% - 48px) / 2.3)",
                 minWidth: "260px",
-                scrollSnapAlign: "start",
               }}
             >
               {/* Image with hover zoom */}
