@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const NAV_ITEMS = [
   { label: "Chi siamo", href: "#about" },
@@ -46,10 +47,17 @@ export default function Navbar() {
             {/* Logo pill - filled */}
             <Link
               href="/"
-              className="relative z-50 bg-black text-white font-light rounded-[5px] tracking-wide hover:bg-black/80 transition-colors"
-              style={{ padding: "5px 10px", fontSize: "15px" }}
+              className="relative z-50 flex items-center"
+              style={{ padding: "5px 10px" }}
             >
-              Flumenia Studio
+              <Image
+                src="/Seedera-Logo.svg"
+                alt="Seedera"
+                width={130}
+                height={22}
+                priority
+                style={{ height: "22px", width: "auto" }}
+              />
             </Link>
 
             {/* Nav pills - hidden on mobile */}

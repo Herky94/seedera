@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 const FOOTER_LINKS = [
   { label: "Chi siamo", href: "#about" },
@@ -84,7 +85,12 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8 border-t border-background/20">
-          <span className="text-h3 font-bold">Seedera</span>
+          <Image
+            src="/Seedera-Logo.svg"
+            alt="Seedera"
+            width={120}
+            height={28}
+          />
           <span className="text-background/50 text-btn">
             © {new Date().getFullYear()} Seedera. Tutti i diritti riservati.
           </span>
