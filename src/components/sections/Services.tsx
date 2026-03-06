@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -190,51 +190,161 @@ const SERVICES: Service[] = [
   },
 ];
 
-/* ── Sub-service list with hover-to-reveal description ── */
+/* ── Scramble text: matrix-style reveal on hover ── */
+function ScrambleText({ text, active }: { text: string; active: boolean }) {
+  const spanRef = useRef<HTMLSpanElement>(null);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  const handleEnter = useCallback(() => {
+    if (tweenRef.current) tweenRef.current.kill();
+    const obj = { progress: 0 };
+    tweenRef.current = gsap.to(obj, {
+      progress: 1,
+      duration: 0.35,
+      ease: "none",
+      onUpdate: () => {
+        if (!spanRef.current) return;
+        const p = obj.progress;
+        const resolved = Math.floor(p * text.length);
+        spanRef.current.textContent = text
+          .split("")
+          .map((ch, i) => {
+            if (ch === " ") return " ";
+            return i < resolved
+              ? ch
+              : chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("");
+      },
+      onComplete: () => {
+        if (spanRef.current) spanRef.current.textContent = text;
+      },
+    });
+  }, [text]);
+
+  return (
+    <span
+      ref={spanRef}
+      onMouseEnter={handleEnter}
+      className="inline-block"
+      style={{
+        fontWeight: active ? 700 : 400,
+        opacity: active ? 1 : 0.3,
+        transform: active ? "translateX(8px)" : "translateX(0)",
+        transition:
+          "font-weight 0.4s ease, opacity 0.4s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+    >
+      {text}
+    </span>
+  );
+}
+
+/* ── Sub-service list with animated hover reveal ── */
 function SubServiceList({ subs }: { subs: SubService[] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
+  const listRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  // Animate the active indicator line to the active item
+  useGSAP(
+    () => {
+      if (activeIndex === null || !listRef.current || !lineRef.current) return;
+      const buttons = listRef.current.querySelectorAll<HTMLElement>(".sub-btn");
+      const target = buttons[activeIndex];
+      if (!target) return;
+
+      const parentRect = listRef.current.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+
+      gsap.to(lineRef.current, {
+        y: targetRect.top - parentRect.top + targetRect.height * 0.2,
+        height: targetRect.height * 0.6,
+        duration: 0.4,
+        ease: "power3.out",
+      });
+    },
+    { scope: listRef, dependencies: [activeIndex] },
+  );
+
+  // Animate description change
+  useGSAP(
+    () => {
+      if (!descRef.current) return;
+      const paragraphs =
+        descRef.current.querySelectorAll<HTMLElement>(".desc-item");
+
+      paragraphs.forEach((p, i) => {
+        if (i === activeIndex) {
+          gsap.killTweensOf(p);
+          gsap.to(p, {
+            opacity: 1,
+            y: 0,
+            duration: 0.45,
+            delay: 0.2,
+            ease: "power3.out",
+          });
+        } else {
+          gsap.killTweensOf(p);
+          gsap.to(p, {
+            opacity: 0,
+            y: -8,
+            duration: 0.2,
+            ease: "power2.in",
+          });
+        }
+      });
+    },
+    { scope: descRef, dependencies: [activeIndex] },
+  );
 
   return (
     <div className="flex flex-col flex-1">
-      {/* Desktop: row layout | Mobile: column */}
       <div className="flex flex-col lg:flex-row lg:justify-between">
-        {/* Sub-service names */}
-        <ul className="flex flex-col gap-1 shrink-0">
-          {subs.map((sub, i) => (
-            <li key={i}>
-              <button
-                className="text-left text-black cursor-pointer leading-none"
-                style={{
-                  fontSize: "var(--font-h5)",
-                  fontWeight: activeIndex === i ? 700 : 400,
-                  opacity: activeIndex === i ? 1 : 0.3,
-                  transition:
-                    "font-weight 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                  padding: "6px 0",
-                }}
-                onMouseEnter={() => setActiveIndex(i)}
-                onClick={() => setActiveIndex(i)}
-              >
-                {sub.name}
-              </button>
-            </li>
-          ))}
-        </ul>
+        {/* Sub-service names with animated line indicator */}
+        <div ref={listRef} className="relative shrink-0">
+          {/* Animated vertical indicator */}
+          <div
+            ref={lineRef}
+            className="absolute left-0 top-0 w-[2px] bg-black rounded-full"
+            style={{ height: 0 }}
+          />
 
-        {/* Description – smooth crossfade */}
-        <div className="relative mt-6 lg:mt-0 lg:w-[280px] xl:w-[350px] 2xl:w-[420px] lg:shrink-0 lg:ml-auto min-h-[80px]">
+          <ul className="flex flex-col">
+            {subs.map((sub, i) => (
+              <li key={i}>
+                <button
+                  className="sub-btn text-left text-black cursor-pointer leading-none block w-full"
+                  style={{
+                    fontSize: "var(--font-h5)",
+                    padding: "8px 0 8px 16px",
+                  }}
+                  onMouseEnter={() => setActiveIndex(i)}
+                  onClick={() => setActiveIndex(i)}
+                >
+                  <ScrambleText text={sub.name} active={activeIndex === i} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Description area with GSAP crossfade */}
+        <div
+          ref={descRef}
+          className="relative mt-6 lg:mt-0 lg:w-[280px] xl:w-[350px] 2xl:w-[420px] lg:shrink-0 lg:ml-auto min-h-[80px]"
+        >
           {subs.map((sub, i) => (
             <p
               key={i}
-              className="text-black/80 absolute top-0 left-0 right-0"
+              className="desc-item text-black/80 absolute top-0 left-0 right-0"
               style={{
                 fontSize: "clamp(0.875rem, 1.111vw, 1.125rem)",
                 lineHeight: 1.5,
-                opacity: activeIndex === i ? 1 : 0,
-                transform:
-                  activeIndex === i ? "translateY(0)" : "translateY(6px)",
-                transition:
-                  "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: i === 0 ? 1 : 0,
+                transform: i === 0 ? "translateY(0)" : "translateY(12px)",
                 pointerEvents: activeIndex === i ? "auto" : "none",
               }}
             >
@@ -307,10 +417,17 @@ export default function Services() {
       {/* Section intro */}
       <div className="pt-24 md:pt-32 pb-12 md:pb-20">
         <div className="container-content">
-          <span className="text-black/30 text-btn uppercase tracking-[0.3em] block mb-4">
+          <span
+            className="inline-flex items-center border border-black text-black font-medium tracking-wide uppercase mb-4"
+            style={{
+              borderRadius: "7px",
+              padding: "5px 14px",
+              fontSize: "15px",
+            }}
+          >
             Servizi
           </span>
-          <h2 className="text-h2 font-bold text-black">Cosa facciamo</h2>
+          <h2 className="text-h2 font-medium text-black">Cosa facciamo</h2>
         </div>
       </div>
 

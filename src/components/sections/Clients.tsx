@@ -99,7 +99,14 @@ export default function Clients() {
 
       {/* Client grid - staggered layout */}
       <div className="container-content py-20 md:py-32">
-        <span className="text-foreground/30 text-btn uppercase tracking-[0.3em] block mb-12">
+        <span
+          className="inline-flex items-center border border-black text-black font-medium tracking-wide uppercase mb-12"
+          style={{
+            borderRadius: "7px",
+            padding: "5px 14px",
+            fontSize: "15px",
+          }}
+        >
           I nostri clienti
         </span>
 

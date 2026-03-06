@@ -314,9 +314,9 @@ export default function Projects() {
   return (
     <section
       ref={sectionRef}
-      id="projects"
+      id="clients"
       className="relative bg-white z-10"
-      aria-label="Progetti"
+      aria-label="Clienti"
     >
       <CustomCursor />
 
@@ -333,7 +333,7 @@ export default function Projects() {
                 fontSize: "15px",
               }}
             >
-              Progetti
+              Persone
             </span>
           </div>
 

@@ -48,8 +48,9 @@ export default function ProjectsOutro() {
   return (
     <section
       ref={sectionRef}
+      id="projects"
       className="relative bg-white z-10"
-      aria-label="Progetti outro"
+      aria-label="Progetti"
     >
       <div className="container-content py-24 md:py-40">
         <div className="flex flex-col md:flex-row md:items-start">

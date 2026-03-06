@@ -1,7 +1,6 @@
 "use client";
 
-const PHRASE_1 =
-  "INSIEME • INNOVIAMO, TRASFORMIAMO, CRESCIAMO";
+const PHRASE_1 = "INSIEME • INNOVIAMO, TRASFORMIAMO, CRESCIAMO";
 
 const PHRASE_2 =
   "Siamo una digital factory che usa i dati ma genera idee out of the box. Tu ci indichi un obiettivo, noi troviamo strade alternative per raggiungerlo velocemente e con risultati concreti.";
@@ -11,7 +10,10 @@ export default function ProjectsMarquee() {
   const repeats = 6;
 
   return (
-    <section className="overflow-hidden select-none bg-white" aria-label="Marquee">
+    <section
+      className="relative overflow-hidden select-none bg-white z-10"
+      aria-label="Marquee"
+    >
       {/* Row 1 – right to left, white background */}
       <div className="bg-white py-5 md:py-6">
         <div className="marquee-loop marquee-rtl">

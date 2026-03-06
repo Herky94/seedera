@@ -1,34 +1,118 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* ── Magnetic scatter: letters react to mouse proximity ── */
+function useHeroMagnetic(containerRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const chars = container.querySelectorAll<HTMLElement>(".hero-char");
+    if (chars.length === 0) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      chars.forEach((char) => {
+        const rect = char.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = clientX - cx;
+        const dy = clientY - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 150;
+
+        if (dist < maxDist) {
+          const force = (1 - dist / maxDist) * 8;
+          gsap.to(char, {
+            x: (-dx / dist) * force,
+            y: (-dy / dist) * force,
+            duration: 0.3,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        } else {
+          gsap.to(char, {
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.5)",
+            overwrite: "auto",
+          });
+        }
+      });
+    };
+
+    const handleMouseLeave = () => {
+      chars.forEach((char) => {
+        gsap.to(char, {
+          x: 0,
+          y: 0,
+          duration: 0.8,
+          ease: "elastic.out(1, 0.4)",
+          overwrite: "auto",
+        });
+      });
+    };
+
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [containerRef]);
+}
+
+function HeroLine({ text }: { text: string }) {
+  return (
+    <span className="hero-line block">
+      {text.split("").map((char, i) => (
+        <span
+          key={i}
+          className="hero-char inline-block"
+          style={{ willChange: "transform" }}
+        >
+          {char === " " ? "\u00A0" : char}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
 
+  useHeroMagnetic(headlineRef);
+
   useGSAP(
     () => {
-      const tl = gsap.timeline();
-      tl.from(headlineRef.current, {
-        y: 80,
+      const lines = headlineRef.current?.querySelectorAll(".hero-line");
+      if (!lines) return;
+
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      tl.from(lines, {
+        y: 100,
         opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
+        duration: 1.3,
+        stagger: 0.12,
       }).from(
         subRef.current,
         {
-          y: 40,
+          y: 20,
           opacity: 0,
-          duration: 1,
-          ease: "power3.out",
+          duration: 0.8,
+          ease: "power2.out",
         },
-        "-=0.6",
+        "-=0.5",
       );
     },
     { scope: containerRef },
@@ -38,19 +122,19 @@ export default function Hero() {
     <section
       ref={containerRef}
       id="hero"
-      className="relative w-full h-screen flex flex-col justify-end overflow-hidden bg-primary"
+      className="relative w-full flex flex-col justify-end overflow-hidden bg-primary"
+      style={{ height: "100svh", minHeight: "100dvh" }}
       aria-label="Hero"
     >
       {/* Bottom-anchored content */}
       <div className="container-content relative z-10 pb-16 md:pb-20">
         <h1
           ref={headlineRef}
-          className="text-h1 text-black font-normal uppercase"
+          className="text-h1 text-black font-normal uppercase overflow-hidden"
         >
-          SIAMO UNA DIGITAL COMPANY
-          <br />
-          CI RIVOLGIAMO A START UP
-          <br />E PICCOLE E MEDIE IMPRESE
+          <HeroLine text="SIAMO UNA DIGITAL COMPANY" />
+          <HeroLine text="CI RIVOLGIAMO A START UP" />
+          <HeroLine text="E PICCOLE E MEDIE IMPRESE" />
         </h1>
       </div>
 
