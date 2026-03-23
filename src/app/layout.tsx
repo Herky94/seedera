@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { LenisProvider } from "@/components/LenisProvider";
+import Cursor from "@/components/Cursor";
 
 const bdoGrotesk = localFont({
-  src: "../fonts/BDOGrotesk-VF-BF648a657078401.ttf",
+  src: "../fonts/BDOGrotesk-VF.ttf",
   variable: "--font-bdo-grotesk",
+  weight: "100 900", // Permette di utilizzare tutti i pesi (da Light a Black)
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
 });
@@ -39,7 +41,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" suppressHydrationWarning>
-      <body className={`${bdoGrotesk.variable} antialiased`}>
+      <body
+        className={`${bdoGrotesk.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        <Cursor />
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>

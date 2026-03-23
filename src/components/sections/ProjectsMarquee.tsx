@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 const PHRASE_1 = "INSIEME • INNOVIAMO, TRASFORMIAMO, CRESCIAMO";
 

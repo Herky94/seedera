@@ -8,7 +8,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 /* ── Magnetic scatter: letters react to mouse proximity ── */
-function useHeroMagnetic(containerRef: React.RefObject<HTMLElement | null>) {
+function useHeroMagnetic(
+  containerRef: React.RefObject<HTMLElement | null>,
+  enabled: React.RefObject<boolean>,
+) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -16,39 +19,57 @@ function useHeroMagnetic(containerRef: React.RefObject<HTMLElement | null>) {
     const chars = container.querySelectorAll<HTMLElement>(".hero-char");
     if (chars.length === 0) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      chars.forEach((char) => {
-        const rect = char.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = clientX - cx;
-        const dy = clientY - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = 150;
+    // Cache rects once; refresh on resize to avoid per-frame getBoundingClientRect
+    let cachedRects: { cx: number; cy: number }[] = [];
+    const cacheRects = () => {
+      cachedRects = Array.from(chars).map((char) => {
+        const r = char.getBoundingClientRect();
+        return { cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+      });
+    };
 
-        if (dist < maxDist) {
-          const force = (1 - dist / maxDist) * 8;
-          gsap.to(char, {
-            x: (-dx / dist) * force,
-            y: (-dy / dist) * force,
-            duration: 0.3,
-            ease: "power2.out",
-            overwrite: "auto",
-          });
-        } else {
-          gsap.to(char, {
-            x: 0,
-            y: 0,
-            duration: 0.6,
-            ease: "elastic.out(1, 0.5)",
-            overwrite: "auto",
-          });
-        }
+    let rafId = 0;
+    let lastX = 0;
+    let lastY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!enabled.current) return;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        const maxDist = 150;
+        chars.forEach((char, i) => {
+          const { cx, cy } = cachedRects[i] || { cx: 0, cy: 0 };
+          const dx = lastX - cx;
+          const dy = lastY - cy;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < maxDist) {
+            const force = (1 - dist / maxDist) * 8;
+            gsap.to(char, {
+              x: (-dx / dist) * force,
+              y: (-dy / dist) * force,
+              duration: 0.3,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          } else {
+            gsap.to(char, {
+              x: 0,
+              y: 0,
+              duration: 0.6,
+              ease: "elastic.out(1, 0.5)",
+              overwrite: "auto",
+            });
+          }
+        });
       });
     };
 
     const handleMouseLeave = () => {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
       chars.forEach((char) => {
         gsap.to(char, {
           x: 0,
@@ -60,27 +81,37 @@ function useHeroMagnetic(containerRef: React.RefObject<HTMLElement | null>) {
       });
     };
 
+    // Refresh cache after page load and on resize
+    window.addEventListener("resize", cacheRects, { passive: true });
+    // Initial cache after a short delay so layout is stable
+    const t = setTimeout(cacheRects, 200);
+
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("mouseleave", handleMouseLeave);
     return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(t);
+      window.removeEventListener("resize", cacheRects);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [containerRef]);
+  }, [containerRef, enabled]);
 }
 
 function HeroLine({ text }: { text: string }) {
   return (
-    <span className="hero-line block">
-      {text.split("").map((char, i) => (
-        <span
-          key={i}
-          className="hero-char inline-block"
-          style={{ willChange: "transform" }}
-        >
-          {char === " " ? "\u00A0" : char}
-        </span>
-      ))}
+    // Overflow-hidden wrapper clips the line during slide-up — no FOUC
+    <span className="block overflow-hidden">
+      <span
+        className="hero-line block"
+        style={{ transform: "translateY(100%)", willChange: "transform" }}
+      >
+        {text.split("").map((char, i) => (
+          <span key={i} className="hero-char inline-block">
+            {char === " " ? "\u00A0" : char}
+          </span>
+        ))}
+      </span>
     </span>
   );
 }
@@ -89,21 +120,26 @@ export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
+  const magneticEnabled = useRef(false);
 
-  useHeroMagnetic(headlineRef);
+  useHeroMagnetic(headlineRef, magneticEnabled);
 
   useGSAP(
     () => {
-      const lines = headlineRef.current?.querySelectorAll(".hero-line");
+      const lines =
+        headlineRef.current?.querySelectorAll<HTMLElement>(".hero-line");
       if (!lines) return;
 
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-      tl.from(lines, {
-        y: 100,
-        opacity: 0,
-        duration: 1.3,
-        stagger: 0.12,
+      tl.to(lines, {
+        y: "0%",
+        duration: 1.2,
+        stagger: 0.1,
+        onComplete: () => {
+          // Enable magnetic effect only after text is fully revealed
+          magneticEnabled.current = true;
+        },
       }).from(
         subRef.current,
         {
@@ -130,7 +166,7 @@ export default function Hero() {
       <div className="container-content relative z-10 pb-16 md:pb-20">
         <h1
           ref={headlineRef}
-          className="text-h1 text-black font-normal uppercase overflow-hidden"
+          className="text-h1 text-black font-normal uppercase select-none cursor-default"
         >
           <HeroLine text="SIAMO UNA DIGITAL COMPANY" />
           <HeroLine text="CI RIVOLGIAMO A START UP" />
@@ -141,9 +177,9 @@ export default function Hero() {
       {/* Scroll indicator */}
       <div
         ref={subRef}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute bottom-4 left-0 w-full container-content flex flex-col items-start gap-2"
       >
-        <div className="w-10 h-10 rounded-full border-2 border-black/30 flex items-center justify-center animate-bounce">
+        <div className="w-10 h-10 rounded-full border-1 border-black flex items-center justify-center animate-bounce">
           <svg
             width="14"
             height="14"

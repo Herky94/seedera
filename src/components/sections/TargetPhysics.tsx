@@ -387,11 +387,11 @@ export default function TargetPhysics() {
               ref={(el) => {
                 innerRefs.current[i] = el;
               }}
-              className="inline-block font-bold uppercase whitespace-nowrap select-none"
+              className="inline-block font-bold uppercase whitespace-nowrap select-none leading-none"
               style={{
-                fontSize: "clamp(22px, 3vw, 44px)",
-                padding: "clamp(10px,1.3vw,18px) clamp(16px,2.5vw,36px)",
-                borderRadius: "12px",
+                fontSize: "22px",
+                padding: "16px 32px",
+                borderRadius: "10px",
                 backgroundColor: brick.color,
                 color: brick.textColor,
                 willChange: "transform",

@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import Link from "next/link";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,52 +15,106 @@ interface Project {
   client: string;
   tags: string[];
   image: string;
+  category: string;
   slug: string;
 }
+
+const CATEGORIES = [
+  "Tutti",
+  "Categoria Uno",
+  "Categoria Due",
+  "Categoria Tre",
+  "Categoria Quattro",
+];
 
 const PROJECTS: Project[] = [
   {
     client: "NOME DEL CLIENTE",
-    tags: ["BRAND IDENTITY", "COMUNICAZIONE"],
+    tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
     image: "/images/projects/Rectangle 24.png",
+    category: "Categoria Uno",
     slug: "progetto-uno",
   },
   {
     client: "NOME DEL CLIENTE",
     tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
     image: "/images/projects/Rectangle 27.png",
+    category: "Categoria Due",
     slug: "progetto-due",
   },
   {
     client: "NOME DEL CLIENTE",
     tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
     image: "/images/projects/Rectangle 24.png",
+    category: "Categoria Uno",
     slug: "progetto-tre",
+  },
+  {
+    client: "NOME DEL CLIENTE",
+    tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
+    image: "/images/projects/Rectangle 27.png",
+    category: "Categoria Tre",
+    slug: "progetto-uno",
+  },
+  {
+    client: "NOME DEL CLIENTE",
+    tags: ["BRAND IDENTITY", "COMUNICAZIONE"],
+    image: "/images/projects/Rectangle 24.png",
+    category: "Categoria Due",
+    slug: "progetto-due",
   },
   {
     client: "NOME DEL CLIENTE",
     tags: ["BRAND IDENTITY", "COMUNICAZIONE"],
     image: "/images/projects/Rectangle 27.png",
+    category: "Categoria Quattro",
+    slug: "progetto-tre",
+  },
+  {
+    client: "NOME DEL CLIENTE",
+    tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
+    image: "/images/projects/Rectangle 24.png",
+    category: "Categoria Tre",
     slug: "progetto-uno",
+  },
+  {
+    client: "NOME DEL CLIENTE",
+    tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
+    image: "/images/projects/Rectangle 27.png",
+    category: "Categoria Quattro",
+    slug: "progetto-due",
   },
   {
     client: "NOME DEL CLIENTE",
     tags: ["COMUNICAZIONE", "WEB DEVELOPMENT"],
     image: "/images/projects/Rectangle 24.png",
-    slug: "progetto-due",
+    category: "Categoria Uno",
+    slug: "progetto-tre",
   },
   {
     client: "NOME DEL CLIENTE",
     tags: ["BRAND IDENTITY", "COMUNICAZIONE"],
     image: "/images/projects/Rectangle 27.png",
+    category: "Categoria Due",
+    slug: "progetto-uno",
+  },
+  {
+    client: "NOME DEL CLIENTE",
+    tags: ["BRAND IDENTITY", "WEB DEVELOPMENT"],
+    image: "/images/projects/Rectangle 24.png",
+    category: "Categoria Tre",
+    slug: "progetto-due",
+  },
+  {
+    client: "NOME DEL CLIENTE",
+    tags: ["BRAND IDENTITY", "COMUNICAZIONE", "WEB DEVELOPMENT"],
+    image: "/images/projects/Rectangle 27.png",
+    category: "Categoria Quattro",
     slug: "progetto-tre",
   },
 ];
 
-const INTRO_TEXT =
-  "Lorem ipsum dolor sit consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus sociis natoque penatibus et m";
-
-/* ── Rolling text effect on hover (CSS translateY approach) ── */
+/* ── Rolling text effect on hover ── */
 function RollingText({ text }: { text: string }) {
   const letters = text.split("");
 
@@ -100,12 +156,10 @@ function CustomCursor() {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    // Start hidden
     gsap.set(cursor, { opacity: 0, scale: 0.5, xPercent: -50, yPercent: -50 });
 
     const onMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
-      // Only move smoothly while visible; otherwise let gsap.set in onShow handle position
       if (isVisible.current) {
         gsap.to(cursor, {
           left: e.clientX,
@@ -119,7 +173,6 @@ function CustomCursor() {
 
     const onShow = () => {
       isVisible.current = true;
-      // Snap position instantly, start from scale 0, then grow
       gsap.set(cursor, {
         left: mousePos.current.x,
         top: mousePos.current.y,
@@ -194,11 +247,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
   return (
     <Link href={`/portfolio/${project.slug}`} className="block">
-      <article
-        ref={cardRef}
-        className={`project-card ${index % 2 === 1 ? "md:mt-16 lg:mt-24" : ""}`}
-      >
-        {/* Image wrapper with overflow hidden for parallax + zoom */}
+      <article ref={cardRef} className="project-card">
         <div
           className="relative overflow-hidden rounded-[10px] cursor-none group [transform:translateZ(0)]"
           style={{ aspectRatio: "4 / 3" }}
@@ -238,7 +287,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           ))}
         </div>
 
-        {/* Client name with rolling text effect */}
+        {/* Client name with rolling text */}
         <h3
           className="uppercase tracking-wide"
           style={{ fontSize: "var(--font-h4)", color: "var(--color-black)" }}
@@ -250,40 +299,22 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   );
 }
 
-/* ── Main Projects section ── */
-export default function Projects() {
+/* ── Portfolio Page ── */
+export default function PortfolioPage() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [activeFilter, setActiveFilter] = useState("Tutti");
 
+  const filteredProjects =
+    activeFilter === "Tutti"
+      ? PROJECTS
+      : PROJECTS.filter((p) => p.category === activeFilter);
+
+  /* GSAP animations */
   useGSAP(
     () => {
       const section = sectionRef.current;
       if (!section) return;
-
-      // Character-by-character text reveal on scroll into view
-      const chars = section.querySelectorAll<HTMLElement>(
-        ".project-intro-char",
-      );
-      if (chars.length > 0) {
-        const introContainer = section.querySelector(".project-intro-text");
-        ScrollTrigger.create({
-          trigger: introContainer,
-          start: "top 80%",
-          end: "top 20%",
-          scrub: 0.5,
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const totalChars = chars.length;
-            chars.forEach((char, ci) => {
-              const charProgress = ci / totalChars;
-              if (progress > charProgress) {
-                char.style.color = "var(--color-black)";
-              } else {
-                char.style.color = "var(--color-grey)";
-              }
-            });
-          },
-        });
-      }
 
       // Parallax on project images
       const images = section.querySelectorAll<HTMLElement>(".project-img");
@@ -320,67 +351,113 @@ export default function Projects() {
         });
       });
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [filteredProjects] },
   );
 
+  /* Re-trigger ScrollTrigger on filter change */
+  useEffect(() => {
+    ScrollTrigger.refresh();
+  }, [filteredProjects]);
+
   return (
-    <section
-      ref={sectionRef}
-      id="portfolio"
-      className="relative bg-white z-10"
-      aria-label="Portfolio"
-    >
-      <CustomCursor />
+    <>
+      <Navbar />
+      <main ref={sectionRef}>
+        <CustomCursor />
 
-      {/* Intro area */}
-      <div className="container-content pt-24 md:pt-40 pb-16 md:pb-24">
-        <div className="flex flex-col md:flex-row md:items-start">
-          {/* Label pill */}
-          <div className="shrink-0 mb-6 md:mb-0">
-            <span
-              className="inline-flex items-center border border-black text-black font-medium tracking-wide uppercase"
-              style={{
-                borderRadius: "7px",
-                padding: "5px 14px",
-                fontSize: "15px",
-              }}
-            >
+        {/* ── Hero ── */}
+        <section
+          className="relative w-full flex items-end"
+          style={{
+            height: "350px",
+            backgroundColor: "var(--color-yellow)",
+            paddingTop: "80px",
+          }}
+        >
+          <div className="container-content pb-10">
+            <h1 className="text-h1 text-black font-normal uppercase select-none">
               Portfolio
-            </span>
+            </h1>
           </div>
+        </section>
 
-          {/* Spacer */}
-          <div className="hidden md:block w-[20%] shrink-0" />
-
-          {/* Text reveal */}
-          <div className="flex-1 project-intro-text">
-            <h2 className="text-h2 font-medium leading-[1.2]">
-              {INTRO_TEXT.split(" ").map((word, wi) => (
-                <span key={wi} className="inline-block mr-[0.3em]">
-                  {word.split("").map((char, ci) => (
-                    <span
-                      key={ci}
-                      className="project-intro-char inline-block transition-colors duration-300 ease-out"
-                      style={{ color: "var(--color-grey)" }}
-                    >
-                      {char}
-                    </span>
-                  ))}
-                </span>
+        {/* ── Filters ── */}
+        <section className="bg-white" style={{ paddingTop: "110px" }}>
+          <div className="container-content">
+            <div className="flex flex-wrap justify-center gap-3">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className="uppercase tracking-wide font-medium transition-all duration-300"
+                  style={{
+                    fontSize: "var(--font-btn)",
+                    padding: "8px 18px",
+                    borderRadius: "7px",
+                    border: "1px solid var(--color-black)",
+                    backgroundColor:
+                      activeFilter === cat
+                        ? "var(--color-black)"
+                        : "transparent",
+                    color:
+                      activeFilter === cat
+                        ? "var(--color-white)"
+                        : "var(--color-black)",
+                  }}
+                >
+                  {cat}
+                </button>
               ))}
-            </h2>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Projects grid – staggered 2 columns */}
-      <div className="container-content pb-24 md:pb-40">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[25px] ">
-          {PROJECTS.map((project, i) => (
-            <ProjectCard key={i} project={project} index={i} />
-          ))}
-        </div>
-      </div>
-    </section>
+        {/* ── Projects Grid ── */}
+        <section className="bg-white" style={{ paddingTop: "50px" }}>
+          <div ref={gridRef} className="container-content pb-24 md:pb-40">
+            <div className="hidden md:grid grid-cols-2 gap-x-[25px]">
+              {/* Left column */}
+              <div className="flex flex-col" style={{ gap: "60px" }}>
+                {filteredProjects
+                  .filter((_, i) => i % 2 === 0)
+                  .map((project, i) => (
+                    <ProjectCard
+                      key={`${activeFilter}-L-${i}`}
+                      project={project}
+                      index={i * 2}
+                    />
+                  ))}
+              </div>
+              {/* Right column – offset top */}
+              <div
+                className="flex flex-col"
+                style={{ paddingTop: "200px", gap: "60px" }}
+              >
+                {filteredProjects
+                  .filter((_, i) => i % 2 === 1)
+                  .map((project, i) => (
+                    <ProjectCard
+                      key={`${activeFilter}-R-${i}`}
+                      project={project}
+                      index={i * 2 + 1}
+                    />
+                  ))}
+              </div>
+            </div>
+            {/* Mobile: single column */}
+            <div className="flex flex-col md:hidden" style={{ gap: "60px" }}>
+              {filteredProjects.map((project, i) => (
+                <ProjectCard
+                  key={`${activeFilter}-${i}`}
+                  project={project}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }

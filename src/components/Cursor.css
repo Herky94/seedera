@@ -1,0 +1,53 @@
+﻿/* #Cursor
+================================================== */
+
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+.cursor {
+  --size: 8px;
+  height: var(--size);
+  width: var(--size);
+  border-radius: 50%;
+  position: fixed;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+}
+
+.cursor.cursor-shadow {
+  background-color: transparent;
+  border: 1px solid #000;
+  --size: 40px;
+  transition:
+    top 0.15s ease-out,
+    left 0.15s ease-out,
+    width 0.2s ease-out,
+    height 0.2s ease-out,
+    background-color 0.2s ease-out,
+    border-color 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+.cursor.cursor-dot {
+  background: #cdfd51;
+  /* No transition on left/top so the dot sticks to the mouse instantly */
+  transition:
+    width 0.2s ease-out,
+    height 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+.cursor-shadow.active {
+  --size: 80px;
+  border-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.cursor-dot.active {
+  --size: 0;
+}

@@ -106,7 +106,7 @@ function DragCursor() {
     <div
       ref={cursorRef}
       className="fixed pointer-events-none z-50"
-      style={{ top: 0, left: 0 }}
+      style={{ top: 0, left: 0, opacity: 0 }}
     >
       <div
         className="flex items-center justify-center rounded-full text-black font-bold text-center leading-tight uppercase"
@@ -233,14 +233,14 @@ export default function OurBrand() {
               key={i}
               className="shrink-0"
               style={{
-                width: "calc((100% - 48px) / 2.3)",
+                width: "clamp(260px, calc((100% - 48px) / 1.2), 420px)",
                 minWidth: "260px",
               }}
             >
               {/* Image with hover zoom */}
               <div
                 className="relative overflow-hidden rounded-[10px] group"
-                style={{ aspectRatio: "3 / 4" }}
+                style={{ aspectRatio: "3 / 4", maxHeight: "65vh" }}
               >
                 <img
                   src={project.image}

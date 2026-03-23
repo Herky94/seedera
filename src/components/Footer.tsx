@@ -13,7 +13,7 @@ gsap.registerPlugin(ScrollTrigger);
 const FOOTER_LINKS = [
   { label: "Chi siamo", href: "#about" },
   { label: "Servizi", href: "#services" },
-  { label: "Persone", href: "#clients" },
+  { label: "Portfolio", href: "#portfolio" },
   { label: "Progetti", href: "#projects" },
   { label: "Target", href: "#target" },
 ];
@@ -90,7 +90,20 @@ function WaveEmail({ email }: { email: string }) {
         ease: "power2.out",
         yoyo: true,
         repeat: 1,
+        onComplete: () => {
+          gsap.set(ch, { y: 0 });
+        },
       });
+    });
+  };
+
+  const handleLeave = () => {
+    const chars =
+      containerRef.current?.querySelectorAll<HTMLElement>(".wave-char");
+    if (!chars) return;
+    chars.forEach((ch) => {
+      gsap.killTweensOf(ch);
+      gsap.to(ch, { y: 0, duration: 0.2, ease: "power2.out" });
     });
   };
 
@@ -99,6 +112,7 @@ function WaveEmail({ email }: { email: string }) {
       ref={containerRef}
       href={`mailto:${email}`}
       onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
       className="group inline-flex items-center gap-3 mt-4 text-black/60 hover:text-black transition-colors duration-300"
       style={{ fontSize: "clamp(1.125rem, 2vw, 1.5rem)" }}
     >
@@ -211,14 +225,23 @@ export default function Footer() {
       {/* ── Big CTA Section ── */}
       <div className="container-content pt-24 md:pt-40 pb-16 md:pb-24">
         <div className="flex flex-col gap-6">
-          <GlitchPill text="Contattaci" />
+          <span
+            className="inline-flex items-center self-start border border-black text-black font-medium tracking-wide uppercase cursor-default"
+            style={{
+              borderRadius: "7px",
+              padding: "5px 14px",
+              fontSize: "15px",
+            }}
+          >
+            Contattaci
+          </span>
           <h2
             className="font-medium leading-[1.05] uppercase"
             style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
           >
             {renderAnimatedText([
               { text: "Hai un progetto?" },
-              { text: "Parliamone.", className: "text-white" },
+              { text: "Parliamone.", className: "text-black" },
             ])}
           </h2>
           <WaveEmail email="hello@seedera.it" />

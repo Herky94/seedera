@@ -9,7 +9,7 @@ import gsap from "gsap";
 const NAV_ITEMS = [
   { label: "Chi siamo", href: "#about" },
   { label: "Servizi", href: "#services" },
-  { label: "Persone", href: "#clients" },
+  { label: "Portfolio", href: "#portfolio" },
   { label: "Progetti", href: "#projects" },
   { label: "Target", href: "#target" },
   { label: "Contattaci", href: "#contact" },
@@ -66,24 +66,11 @@ function MagneticPill({
 
 /* ── Logo spin: spins 360° on click ── */
 function SpinLogo() {
-  const ref = useRef<HTMLAnchorElement>(null);
-
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    gsap.to(ref.current, {
-      rotation: "+=360",
-      duration: 0.8,
-      ease: "power3.inOut",
-    });
-  }, []);
-
   return (
     <Link
-      ref={ref}
       href="/"
-      onClick={handleClick}
       className="relative z-50 flex items-center justify-center bg-black rounded-[5px]"
-      style={{ padding: "12px 18px", willChange: "transform" }}
+      style={{ padding: "12px 18px" }}
     >
       <Image
         src="/Seedera-Logo.svg"
@@ -169,7 +156,7 @@ export default function Navbar() {
     <>
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-          scrolled ? "backdrop-blur-md" : ""
+          scrolled && !isOpen ? "backdrop-blur-2xl bg-white/30" : ""
         }`}
       >
         <div className="container-content flex items-center justify-between py-3">
@@ -248,7 +235,7 @@ export default function Navbar() {
 
       {/* Fullscreen menu overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black flex flex-col justify-between ${
+        className={`fixed inset-0 z-40 bg-black flex flex-col ${
           isOpen ? "menu-open pointer-events-auto" : "pointer-events-none"
         }`}
         style={{
@@ -259,47 +246,51 @@ export default function Navbar() {
         }}
       >
         {/* Top spacer to push nav below header */}
-        <div className="h-24" />
+        <div className="shrink-0" style={{ height: "64px" }} />
 
-        {/* Nav links */}
-        <nav className="flex-1 flex flex-col justify-center container-content">
-          {NAV_ITEMS.map((item, i) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={(e) => handleNavClick(e, item.href, true)}
-              className="mobile-menu-link text-white font-bold tracking-tight hover:text-primary transition-colors duration-300 border-b border-white/10 py-4"
-              style={{
-                transitionDelay: isOpen ? `${0.3 + i * 0.06}s` : "0s",
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              }}
-            >
-              <span className="flex items-center justify-between">
-                <span>{item.label}</span>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  className="opacity-40"
-                >
-                  <path
-                    d="M5 15L15 5M15 5H6M15 5v9"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </Link>
-          ))}
+        {/* Nav links – scrollable if screen is short */}
+        <nav className="flex-1 min-h-0 overflow-y-auto container-content flex flex-col">
+          <div className="my-auto">
+            {NAV_ITEMS.map((item, i) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href, true)}
+                className="mobile-menu-link text-white font-bold tracking-tight hover:text-primary transition-colors duration-300 border-b border-white/10 flex"
+                style={{
+                  transitionDelay: isOpen ? `${0.3 + i * 0.06}s` : "0s",
+                  fontSize: "clamp(1.75rem, 5vw, 3.5rem)",
+                  paddingBlock: "clamp(0.6rem, 2vh, 1.25rem)",
+                }}
+              >
+                <span className="flex items-center justify-between w-full">
+                  <span>{item.label}</span>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    className="opacity-40 shrink-0"
+                  >
+                    <path
+                      d="M5 15L15 5M15 5H6M15 5v9"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+              </Link>
+            ))}
+          </div>
         </nav>
 
         {/* Bottom info */}
         <div
-          className="container-content pb-8 mobile-menu-link"
+          className="shrink-0 container-content mobile-menu-link"
           style={{
+            paddingBottom: "clamp(1rem, 3vh, 2rem)",
             transitionDelay: isOpen
               ? `${0.3 + NAV_ITEMS.length * 0.06}s`
               : "0s",

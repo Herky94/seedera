@@ -126,27 +126,18 @@ body {
    LAYOUT – Section content container
    Sections stay full-width (for bg colors/images).
    Wrap inner content in .container-content.
-   – Mobile (<768):  20px side padding
-   – Tablet+ (≥768): 48px side padding
-   – >1440px:         max-width 1344px (1440−48×2), centered
+   – Mobile:   24px side padding
+   – Desktop (≥768): 48px side padding
    ============================================= */
 
 .container-content {
   width: 100%;
-  max-width: 1344px; /* 1440 − 48×2 */
-  margin-inline: auto;
-  padding-inline: 20px;
+  padding-inline: 24px;
 }
 
 @media (min-width: 768px) {
   .container-content {
     padding-inline: 48px;
-  }
-}
-
-@media (min-width: 1440px) {
-  .container-content {
-    padding-inline: 0;
   }
 }
 

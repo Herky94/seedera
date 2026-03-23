@@ -414,28 +414,11 @@ export default function Services() {
       className="relative z-0 bg-white"
       aria-label="Servizi"
     >
-      {/* Section intro */}
-      <div className="pt-24 md:pt-32 pb-12 md:pb-20">
-        <div className="container-content">
-          <span
-            className="inline-flex items-center border border-black text-black font-medium tracking-wide uppercase mb-4"
-            style={{
-              borderRadius: "7px",
-              padding: "5px 14px",
-              fontSize: "15px",
-            }}
-          >
-            Servizi
-          </span>
-          <h2 className="text-h2 font-medium text-black">Cosa facciamo</h2>
-        </div>
-      </div>
-
       {/* Service cards */}
       {SERVICES.map((service, i) => (
         <div
           key={i}
-          className={`service-card w-full container-content ${i > 0 ? "mt-4 md:mt-[150px]" : ""}`}
+          className={`service-card w-full container-content ${i > 0 ? "mt-4 md:mt-[150px]" : "pt-24 md:pt-32"}`}
         >
           <div
             className="rounded-[10px] flex flex-col"
@@ -443,19 +426,19 @@ export default function Services() {
           >
             <div className="px-5 md:px-12 lg:px-16 pt-8 md:pt-12 pb-8 md:pb-14">
               {/* ── Row 1: Number + Title ── */}
-              <div className="flex items-baseline gap-4">
+              <div className="flex items-baseline">
                 <span
-                  className="text-black font-medium leading-none shrink-0 md:w-[clamp(150px,15.625vw,225px)]"
+                  className="text-black font-medium leading-none shrink-0 mr-4 md:mr-0 md:w-[clamp(150px,15.625vw,225px)]"
                   style={{
                     fontSize: "clamp(2rem, 5.417vw, 4.875rem)",
                   }}
                 >
                   0{i + 1}
                 </span>
-                {/* Desktop spacer to match image+gap below */}
+                {/* Desktop spacer = exactly content gap → title aligns with sub-list */}
                 <div
                   className="hidden md:block shrink-0"
-                  style={{ width: "clamp(2rem, 5.556vw, 5rem)" }}
+                  style={{ width: "clamp(1.25rem, 8.333vw, 9rem)" }}
                 />
                 <h3
                   className="text-black font-normal uppercase leading-none"
@@ -473,7 +456,7 @@ export default function Services() {
               {/* ── Content: Image + Subs + Description ── */}
               <div
                 className="flex flex-col md:flex-row"
-                style={{ gap: "clamp(1.25rem, 5.556vw, 5rem)" }}
+                style={{ gap: "clamp(1.25rem, 8.333vw, 9rem)" }}
               >
                 <div className="shrink-0 bg-black rounded-[5px] w-[120px] h-[120px] md:w-[clamp(150px,15.625vw,225px)] md:h-[clamp(150px,15.625vw,225px)]" />
 
